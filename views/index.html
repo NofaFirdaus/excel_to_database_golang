@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid black;
+      }
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/add" method="POST" accept=".xlsx" enctype="multipart/form-data">
+      <div>
+        <label for="file">file</label>
+        <input type="file" name="file" id="file" />
+        <button type="submit">submit</button>
+      </div>
+    </form>
+
+    <a href="templates/done.xlsx" download="templates/done.xlsx">
+      download template
+    </a>
+    <button onclick=deleteData() id="delete">delete all</button>
+    <div>
+      <h1>Data</h1>
+
+      <table id="dataTable">
+        <thead>
+          <tr>
+            <th>Id_table1</th>
+            <th>Column1</th>
+            <th>Column2</th>
+            <th>Column3</th>
+            <th>Column4</th>
+            <th>Column5</th>
+            <th>Column6</th>
+            <th>Id_table2</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script>
+      async function fetchData() {
+        try {
+          const response = await fetch("http://localhost:8080/get");
+          const data = await response.json();
+          console.log(data);
+
+          const tableBody = document
+            .getElementById("dataTable")
+            .getElementsByTagName("tbody")[0];
+
+          data.forEach((item) => {
+            const row = tableBody.insertRow();
+            row.insertCell(0).textContent = item.Id_table1;
+            row.insertCell(1).textContent = item.Column1;
+            row.insertCell(2).textContent = item.Column2;
+            row.insertCell(3).textContent = item.Column3;
+            row.insertCell(4).textContent = item.Column4;
+            row.insertCell(5).textContent = item.Column5;
+            row.insertCell(6).textContent = item.Column6;
+            row.insertCell(7).textContent = item.Id_table2;
+          });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+
+
+      async function deleteData() {
+        try {
+          const response = await fetch("http://localhost:8080/delete", {
+            method: "DELETE",
+          });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      window.onload = fetchData;
+    </script>
+  </body>
+</html>
