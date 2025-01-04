@@ -61,7 +61,3 @@ FROM
 	}
 	return tabel
 }
-
-func DeleteAll() {
-	config.DB.Exec(`DELETE FROM table1`)
-}

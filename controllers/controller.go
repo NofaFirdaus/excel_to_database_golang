@@ -35,13 +35,11 @@ func Add(w http.ResponseWriter, r *http.Request) {
 	}
 	defer dst.Close()
 
-	// Copy the uploaded file to the destination
 	if _, err := io.Copy(dst, file); err != nil {
 		http.Error(w, "Error saving file", http.StatusInternalServerError)
 		return
 	}
 
-	// fmt the size of the created file
 	fileInfo, err := os.Stat(dstPath)
 	if err != nil {
 		fmt.Printf("Error getting file info: %v", err)
@@ -49,7 +47,6 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("File created: %s, Size: %d bytes", dstPath, fileInfo.Size())
 	}
 
-	// Attempt to convert the Excel file to CSV
 	csvFileName, err := helper.XlsxToCsv(dstPath)
 	if err != nil {
 		fmt.Printf("Failed to convert Excel to CSV: %v", err)
@@ -57,7 +54,6 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Process the CSV file
 	errDa := helper.CsvToDatabase(csvFileName)
 	if errDa != nil {
 		fmt.Printf("Failed to process CSV file: %v", errDa)
@@ -78,10 +74,4 @@ func GetAllTable(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(table)
 
-}
-
-func DeleteAll(w http.ResponseWriter, r *http.Request) {
-	models.DeleteAll()
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode("oke")
 }
